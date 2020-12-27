@@ -22,6 +22,7 @@ import com.todo.todoapi.repository.TodoRepository;
 @RestController
 @RequestMapping("/api/todos")
 @CrossOrigin("http://localhost:4200")
+//@CrossOrigin("*") --> recebe de qualquer origem
 public class TodoController {
 
 	@Autowired
