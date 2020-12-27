@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { TodoService } from './todo.service';
 import { Todo } from './todo';
 
@@ -12,7 +12,7 @@ export class AppComponent implements OnInit{
 
   todos: Todo[] = []
   form: FormGroup = new FormGroup({
-    description : new FormControl('')
+    description : new FormControl('', [Validators.required , Validators.minLength(4)])
   })
 
   constructor(
@@ -20,7 +20,13 @@ export class AppComponent implements OnInit{
   ){}
 
   ngOnInit(){
-    this.service.listar().subscribe(todoList => this.todos = todoList);
+    this.listarTodos();
+  }
+
+  listarTodos(){
+    this.service.listar().subscribe(todoList =>{
+      this.todos = todoList
+    })
   }
 
   submit(){
@@ -31,5 +37,20 @@ export class AppComponent implements OnInit{
         this.todos.push(savedTodo)
         this.form.reset()
       })
+  }
+
+  delete(todo: Todo){
+    this.service.deletar(todo.id).subscribe({
+      next: (response) => this.listarTodos()
+    })
+  }
+
+  done(todo: Todo){
+    this.service.marcarComoConcluido(todo.id).subscribe({
+      next: (todoAtualizado) =>{
+        todo.done = todoAtualizado.done;
+        todo.doneDate = todoAtualizado.doneDate;
+      } 
+    })
   }
 }
